@@ -41,14 +41,16 @@ def main():
     # load config
 
     # dataset_root = '/home/cx/toolkit/got10k/datasets/test'
-    dataset_root = '/home/kb/TransT-main/transt_data/home/cx/cx3/LaSOTBenchmark'
+    # dataset_root = '/home/kb/TransT-main/transt_data/home/cx/cx3/LaSOTBenchmark'
     # dataset_root = '/home/cx/cx2/LaSOTBenchmark'
     # dataset_root = '/home/cx/cx2/TrackingNet/TEST/frames'
     # dataset_root = '/home/cx/cx2/OTB100'
     # dataset_root = '/home/cx/cx2/Downloads/nfs'
     # dataset_root = '/home/cx/cx2/Downloads/UAV123/UAV123_fix/Dataset_UAV123/UAV123/data_seq/UAV123'
     # net_path = '/home/cx/cx1/TransT_experiments/models/8GPU_N2/TransT_ep0500.pth.tar'
-    net_path = '/home/kb/HCAT/pysot_toolkit/models/res18_N2_q16.pth'
+    # net_path = '/home/kb/HCAT/pysot_toolkit/models/res18_N2_q16.pth'
+    dataset_root = '/media/cs303-2/DATA/hza/data/BirdSAI/'
+    net_path = '/media/cs303-2/DATA/hza/hcat/checkpoints/ltr/hcat/hcat/HCAT_ep0110.pth.tar'
 
     # create model
     name = 'HCAT'

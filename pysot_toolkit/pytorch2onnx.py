@@ -93,10 +93,10 @@ if __name__ == "__main__":
     settings.position_embedding = 'sine'
     settings.hidden_dim = 256
 
-    settings.backbone = 'convnext_tiny'
+    # settings.backbone = 'convnext_tiny'
     # settings.backbone = 'resnet50'
     # settings.backbone = 'resnet18'
-    # settings.backbone = 'lightrack_backbone_M'
+    settings.backbone = 'lightrack_backbone_M'
     settings.dropout = 0.1
     settings.nheads = 8
     settings.dim_feedforward = 2048
@@ -114,7 +114,9 @@ if __name__ == "__main__":
         feature_template_d = 96
     use_gpu = True
     num_classes = 1
-    model_path = os.path.join(os.path.dirname(__file__),'models','convnext_tiny_N2_q16.pth')
+    # model_path = os.path.join(os.path.dirname(__file__),'models','convnext_tiny_N2_q16.pth')
+    model_path = '/media/cs303-2/DATA/hza/hcat/checkpoints/ltr/hcat/hcat/HCAT_ep0110.pth.tar'
+
     backbone_net = build_backbone(settings,backbone_pretrained=False)
     featurefusion_network = build_featurefusion_network(settings)
     net = HCAT(backbone_net,featurefusion_network,num_classes=num_classes)

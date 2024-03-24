@@ -14,7 +14,7 @@ if env_path not in sys.path:
 from glob import glob
 from tqdm import tqdm
 from multiprocessing import Pool
-from pysot_toolkit.toolkit.datasets import OTBDataset, UAVDataset, LaSOTDataset, VOTDataset, NFSDataset, VOTLTDataset
+from pysot_toolkit.toolkit.datasets import OTBDataset, UAVDataset, LaSOTDataset, VOTDataset, NFSDataset, VOTLTDataset, BirdSAIDataset
 from pysot_toolkit.toolkit.evaluation import OPEBenchmark, AccuracyRobustnessBenchmark, EAOBenchmark, F1Benchmark
 from pysot_toolkit.toolkit.visualization import draw_success_precision
 import numpy as np
@@ -40,6 +40,7 @@ def main():
     trackers = glob(os.path.join(args.tracker_path,
                                  args.dataset,
                                  args.tracker_prefix+'*'))
+    # trackers = ["results/BirdSAI/'hcat'"]
     trackers = [x.split('/')[-1] for x in trackers]
 
     assert len(trackers) > 0
@@ -183,6 +184,34 @@ def main():
                 f1_result.update(ret)
         benchmark.show_result(f1_result,
                 show_video_level=args.show_video_level)
+    elif 'BirdSAI' == args.dataset:
+        dataset = BirdSAIDataset(args.dataset, '/media/cs303-2/DATA/hza/data/BirdSAI/')
+        dataset.set_tracker(tracker_dir, trackers)
+        benchmark = OPEBenchmark(dataset)
+        success_ret = {}
+        with Pool(processes=args.num) as pool:
+            for ret in tqdm(pool.imap_unordered(benchmark.eval_success,
+                trackers), desc='eval success', total=len(trackers), ncols=100):
+                success_ret.update(ret)
+        precision_ret = {}
+        with Pool(processes=args.num) as pool:
+            for ret in tqdm(pool.imap_unordered(benchmark.eval_precision,
+                trackers,), desc='eval precision', total=len(trackers), ncols=100):
+                precision_ret.update(ret)
+        norm_precision_ret = {}
+        with Pool(processes=args.num) as pool:
+            for ret in tqdm(pool.imap_unordered(benchmark.eval_norm_precision,
+                trackers), desc='eval norm precision', total=len(trackers), ncols=100):
+                norm_precision_ret.update(ret)
+        benchmark.show_result(success_ret, precision_ret, norm_precision_ret,
+                              show_video_level=args.show_video_level)
+        if args.vis:
+            draw_success_precision(success_ret,
+                                   name=dataset.name,
+                                   videos=dataset.attr['ALL'],
+                                   attr='ALL',
+                                   precision_ret=precision_ret,
+                                   norm_precision_ret=norm_precision_ret)
 
 
 if __name__ == '__main__':

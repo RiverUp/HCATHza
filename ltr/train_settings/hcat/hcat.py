@@ -1,6 +1,6 @@
 # -*-coding:utf-8-*-
 import torch
-from ltr.dataset import Lasot, MSCOCOSeq, Got10k, TrackingNet
+from ltr.dataset import Lasot, MSCOCOSeq, Got10k, TrackingNet, BirdSAI
 from ltr.data import processing, sampler, LTRLoader
 import ltr.models.tracking.hcat as hcat_models
 from ltr import actors
@@ -40,13 +40,17 @@ def run(settings):
     settings.dim_feedforward = 2048
     settings.featurefusion_layers = 2
 
+    torch.backends.cudnn.enabled = False
+    print(torch.backends.cudnn.enabled)
+
     # Train datasets
 
-    lasot_train = Lasot(settings.env.lasot_dir, split='train')
+    # lasot_train = Lasot(settings.env.lasot_dir, split='train')
     # got10k_train = Got10k(settings.env.got10k_dir, split='all')
-    got10k_train = Got10k(settings.env.got10k_dir, split='vottrain')
-    trackingnet_train = TrackingNet(settings.env.trackingnet_dir, set_ids=list(range(12)))
-    coco_train = MSCOCOSeq(settings.env.coco_dir)
+    # got10k_train = Got10k(settings.env.got10k_dir, split='vottrain')
+    # trackingnet_train = TrackingNet(settings.env.trackingnet_dir, set_ids=list(range(12)))
+    # coco_train = MSCOCOSeq(settings.env.coco_dir)
+    birdsai_train = BirdSAI(settings.env.birdsai_dir)
 
     # The joint augmentation transform, that is applied to the pairs jointly
     transform_joint = tfm.Transform(tfm.ToGrayscale(probability=0.05))
@@ -67,8 +71,11 @@ def run(settings):
                                                       joint_transform=transform_joint)
 
     # The sampler for training
-    dataset_train = sampler.HCATSampler([lasot_train, got10k_train, coco_train, trackingnet_train], [1,1,1,1],
-                                samples_per_epoch=50000, max_gap=100, processing=data_processing_train)
+    dataset_train = sampler.HCATSampler([birdsai_train], [1],
+                                          samples_per_epoch=1000 * settings.batch_size, max_gap=100,
+                                          processing=data_processing_train)
+    # dataset_train = sampler.HCATSampler([lasot_train, got10k_train, coco_train, trackingnet_train], [1,1,1,1],
+    #                             samples_per_epoch=50000, max_gap=100, processing=data_processing_train)
 
     # dataset_train = sampler.HCATSampler([lasot_train], [1],
     #                             samples_per_epoch=1000*settings.batch_size, max_gap=100, processing=data_processing_train)

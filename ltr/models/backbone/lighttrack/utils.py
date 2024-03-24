@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import numpy as np
 
 from typing import Tuple, Optional, List
-from torch._six import container_abcs
+from collections.abc import Container as container_abcs
 from itertools import repeat
 
 
